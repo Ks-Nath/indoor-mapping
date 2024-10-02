@@ -1,133 +1,236 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Indoor Navigation Map</title>
+    <title>Indoor Navigation Map with QR Code and Shortest Route</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
-        body { 
+        body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 20px;
-            padding: 20px;
         }
-
         #map-container {
             margin-top: 30px;
         }
-
-        .qrcode {
-            display: inline-block;
-            margin-left: 10px;
+        select {
+            font-size: 16px;
+            padding: 5px;
+            margin-top: 10px;
+        }
+        #qrCodes {
+            margin-top: 30px;
         }
     </style>
 </head>
 <body>
     <h1>Indoor Navigation Map</h1>
-    <h2>QR Codes for Rooms</h2>
-    <ul>
-        <li>Room 101 <div id="qrcode101" class="qrcode"></div></li>
-        <li>Room 102 <div id="qrcode102" class="qrcode"></div></li>
-        <li>Room 201 <div id="qrcode201" class="qrcode"></div></li>
-        <li>Room 202 <div id="qrcode202" class="qrcode"></div></li>
-    </ul>
 
+    <!-- Dropdown for Destination -->
     <div id="map-container">
+        <h2>Select Destination:</h2>
+        <select id="destination">
+            <option value="none">Select a Room</option>
+            <option value="room101">Room 101</option>
+            <option value="room102">Room 102</option>
+            <option value="room201">Room 201</option>
+            <option value="room202">Room 202</option>
+        </select>
+
+        <!-- Canvas for the Map -->
         <h2>Map:</h2>
         <div id="map"></div>
     </div>
 
+    <!-- QR Code Display for Rooms -->
+    <div id="qrCodes">
+        <h2>QR Codes for Starting Locations:</h2>
+        <div id="qr-room101"></div>
+        <div id="qr-room102"></div>
+        <div id="qr-room201"></div>
+        <div id="qr-room202"></div>
+    </div>
+
     <script>
-        // QR code data for each room
-        var rooms = [
-            { id: "qrcode101", url: "https://ks-nath.github.io/indoor-mapping?location=room101" },
-            { id: "qrcode102", url: "https://ks-nath.github.io/indoor-mapping?location=room102" },
-            { id: "qrcode201", url: "https://ks-nath.github.io/indoor-mappinglocation=room201" },
-            { id: "qrcode202", url: "https://ks-nath.github.io/indoor-mapping?location=room202" }
-        ];
+        let cols = 5;
+        let rows = 5;
+        let grid = [];
+        let openSet = [];
+        let closedSet = [];
+        let start, end;
+        let path = [];
+        let w, h;
+        let destinationRoom = null;
 
-        // Generate QR codes
-        rooms.forEach(function(room) {
-            new QRCode(document.getElementById(room.id), {
-                text: room.url,
-                width: 128,
-                height: 128,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
-        });
-
-        // p5.js sketch to create the map
-        let roomLocation;
+        // Room positions (mapping to grid coordinates)
+        const roomMapping = {
+            room101: { x: 1, y: 1 },
+            room102: { x: 3, y: 1 },
+            room201: { x: 1, y: 3 },
+            room202: { x: 3, y: 3 }
+        };
 
         function setup() {
             const canvas = createCanvas(400, 400);
             canvas.parent('map');
-            noLoop();
+
+            // Create a grid of nodes
+            w = width / cols;
+            h = height / rows;
+            for (let i = 0; i < cols; i++) {
+                grid[i] = new Array(rows);
+                for (let j = 0; j < rows; j++) {
+                    grid[i][j] = new Spot(i, j);
+                }
+            }
+
+            // Assign neighbors for each spot in the grid
+            for (let i = 0; i < cols; i++) {
+                for (let j = 0; j < rows; j++) {
+                    grid[i][j].addNeighbors(grid);
+                }
+            }
+
+            // Get current location from URL (scanned QR code)
+            const urlParams = new URLSearchParams(window.location.search);
+            const currentLocation = urlParams.get('location');
+            if (currentLocation) {
+                const startCoords = roomMapping[currentLocation];
+                start = grid[startCoords.x][startCoords.y];
+                start.wall = false;
+                openSet.push(start);
+            }
+
+            noLoop(); // We control when the canvas redraws
         }
 
         function draw() {
             background(255);
-            // Draw room layout (simple squares for now)
-            drawRooms();
 
-            // Get location from URL and highlight the appropriate room
-            const urlParams = new URLSearchParams(window.location.search);
-            roomLocation = urlParams.get('location');
+            // Draw the grid
+            for (let i = 0; i < cols; i++) {
+                for (let j = 0; j < rows; j++) {
+                    grid[i][j].show(color(255));
+                }
+            }
 
-            if (roomLocation) {
-                highlightRoom(roomLocation);
+            // A* Algorithm for finding the shortest path
+            if (openSet.length > 0) {
+                let winner = 0;
+                for (let i = 0; i < openSet.length; i++) {
+                    if (openSet[i].f < openSet[winner].f) {
+                        winner = i;
+                    }
+                }
+                let current = openSet[winner];
+
+                if (current === end) {
+                    noLoop();  // Path found
+                    console.log("Path found!");
+                }
+
+                // Move current node from openSet to closedSet
+                openSet = openSet.filter(node => node !== current);
+                closedSet.push(current);
+
+                // Check neighbors
+                let neighbors = current.neighbors;
+                for (let i = 0; i < neighbors.length; i++) {
+                    let neighbor = neighbors[i];
+
+                    if (!closedSet.includes(neighbor) && !neighbor.wall) {
+                        let tempG = current.g + 1;
+                        let newPath = false;
+                        if (openSet.includes(neighbor)) {
+                            if (tempG < neighbor.g) {
+                                neighbor.g = tempG;
+                                newPath = true;
+                            }
+                        } else {
+                            neighbor.g = tempG;
+                            newPath = true;
+                            openSet.push(neighbor);
+                        }
+
+                        if (newPath) {
+                            neighbor.h = heuristic(neighbor, end);
+                            neighbor.f = neighbor.g + neighbor.h;
+                            neighbor.previous = current;
+                        }
+                    }
+                }
+            }
+
+            // Draw the path
+            path = [];
+            let temp = current;
+            path.push(temp);
+            while (temp.previous) {
+                path.push(temp.previous);
+                temp = temp.previous;
+            }
+
+            for (let i = 0; i < path.length; i++) {
+                path[i].show(color(0, 255, 0));
             }
         }
 
-        function drawRooms() {
-            // Draw room 101
-            fill(200);
-            rect(50, 50, 100, 100);  // Room 101
-            textSize(20);
-            fill(0);
-            text("Room 101", 60, 120);
+        function Spot(i, j) {
+            this.x = i;
+            this.y = j;
+            this.f = 0;
+            this.g = 0;
+            this.h = 0;
+            this.neighbors = [];
+            this.previous = undefined;
+            this.wall = false;
 
-            // Draw room 102
-            fill(200);
-            rect(200, 50, 100, 100);  // Room 102
-            fill(0);
-            text("Room 102", 210, 120);
+            this.show = function(col) {
+                fill(col);
+                stroke(0);
+                rect(this.x * w, this.y * h, w, h);
+            };
 
-            // Draw room 201
-            fill(200);
-            rect(50, 200, 100, 100);  // Room 201
-            fill(0);
-            text("Room 201", 60, 270);
-
-            // Draw room 202
-            fill(200);
-            rect(200, 200, 100, 100);  // Room 202
-            fill(0);
-            text("Room 202", 210, 270);
+            this.addNeighbors = function(grid) {
+                let i = this.x;
+                let j = this.y;
+                if (i < cols - 1) this.neighbors.push(grid[i + 1][j]);
+                if (i > 0) this.neighbors.push(grid[i - 1][j]);
+                if (j < rows - 1) this.neighbors.push(grid[i][j + 1]);
+                if (j > 0) this.neighbors.push(grid[i][j - 1]);
+            };
         }
 
-        function highlightRoom(room) {
-            if (room === 'room101') {
-                fill(255, 0, 0);
-                rect(50, 50, 100, 100);  // Highlight Room 101
-            }
-            if (room === 'room102') {
-                fill(255, 0, 0);
-                rect(200, 50, 100, 100);  // Highlight Room 102
-            }
-            if (room === 'room201') {
-                fill(255, 0, 0);
-                rect(50, 200, 100, 100);  // Highlight Room 201
-            }
-            if (room === 'room202') {
-                fill(255, 0, 0);
-                rect(200, 200, 100, 100);  // Highlight Room 202
-            }
+        function heuristic(a, b) {
+            let d = dist(a.x, a.y, b.x, b.y);
+            return d;
         }
+
+        // Handle dropdown selection for destination
+        document.getElementById('destination').addEventListener('change', function() {
+            const selectedRoom = this.value;
+            if (selectedRoom !== 'none') {
+                const endCoords = roomMapping[selectedRoom];
+                end = grid[endCoords.x][endCoords.y];
+                end.wall = false;
+                redraw();  // Redraw map and path
+            }
+        });
+
+        // Generate QR codes for each room
+        function generateQRCode(elementId, room) {
+            const qrCodeData = `https://ks-nath.github.io/indoor-mapping?location=${room}`;
+            new QRCode(document.getElementById(elementId), {
+                text: qrCodeData,
+                width: 128,
+                height: 128
+            });
+        }
+
+        generateQRCode('qr-room101', 'room101');
+        generateQRCode('qr-room102', 'room102');
+        generateQRCode('qr-room201', 'room201');
+        generateQRCode('qr-room202', 'room202');
     </script>
 </body>
 </html>
