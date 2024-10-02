@@ -60,7 +60,7 @@
             room402: { x: 300, y: 400 }  // Room 402
         };
 
-        // Graph representation of rooms
+        // Graph representation of rooms with bidirectional connections
         const graph = {
             room101: ['room102', 'room201', 'room301'],
             room102: ['room101', 'room202', 'room302'],
@@ -68,8 +68,8 @@
             room202: ['room102', 'room201', 'room402'],
             room301: ['room101', 'room302'],
             room302: ['room102', 'room301', 'room402'],
-            room401: ['room201'],
-            room402: ['room202']
+            room401: ['room201', 'room402'],
+            room402: ['room202', 'room302', 'room401'] // Added bi-directional connection
         };
 
         let startRoom = null;
