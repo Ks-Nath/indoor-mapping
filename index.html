@@ -21,7 +21,7 @@
         #qrCodes {
             margin-top: 30px;
             display: flex;
-            flex-wrap: wrap; /* Allow the QR codes to wrap to the next line */
+            flex-wrap: wrap;
             gap: 20px; /* Add space between the QR codes */
         }
         .qrCodeContainer {
@@ -31,9 +31,17 @@
         #dropdown-container {
             display: none; /* Initially hide the dropdown */
         }
-        .qrDropdown {
+        button {
             margin-top: 10px;
-            font-size: 16px;
+            font-size: 14px;
+            padding: 8px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
@@ -46,66 +54,42 @@
         <div class="qrCodeContainer">
             <div id="qr-room101"></div>
             <p>Room 101</p>
-            <select class="qrDropdown" onchange="downloadQRCode('qr-room101')">
-                <option value="">Download QR Code</option>
-                <option value="room101">Download Room 101</option>
-            </select>
+            <button onclick="downloadQRCode('qr-room101')">Download Room 101 QR Code</button>
         </div>
         <div class="qrCodeContainer">
             <div id="qr-room102"></div>
             <p>Room 102</p>
-            <select class="qrDropdown" onchange="downloadQRCode('qr-room102')">
-                <option value="">Download QR Code</option>
-                <option value="room102">Download Room 102</option>
-            </select>
+            <button onclick="downloadQRCode('qr-room102')">Download Room 102 QR Code</button>
         </div>
         <div class="qrCodeContainer">
             <div id="qr-room201"></div>
             <p>Room 201</p>
-            <select class="qrDropdown" onchange="downloadQRCode('qr-room201')">
-                <option value="">Download QR Code</option>
-                <option value="room201">Download Room 201</option>
-            </select>
+            <button onclick="downloadQRCode('qr-room201')">Download Room 201 QR Code</button>
         </div>
         <div class="qrCodeContainer">
             <div id="qr-room202"></div>
             <p>Room 202</p>
-            <select class="qrDropdown" onchange="downloadQRCode('qr-room202')">
-                <option value="">Download QR Code</option>
-                <option value="room202">Download Room 202</option>
-            </select>
+            <button onclick="downloadQRCode('qr-room202')">Download Room 202 QR Code</button>
         </div>
         <div class="qrCodeContainer">
             <div id="qr-room301"></div>
             <p>Room 301</p>
-            <select class="qrDropdown" onchange="downloadQRCode('qr-room301')">
-                <option value="">Download QR Code</option>
-                <option value="room301">Download Room 301</option>
-            </select>
+            <button onclick="downloadQRCode('qr-room301')">Download Room 301 QR Code</button>
         </div>
         <div class="qrCodeContainer">
             <div id="qr-room302"></div>
             <p>Room 302</p>
-            <select class="qrDropdown" onchange="downloadQRCode('qr-room302')">
-                <option value="">Download QR Code</option>
-                <option value="room302">Download Room 302</option>
-            </select>
+            <button onclick="downloadQRCode('qr-room302')">Download Room 302 QR Code</button>
         </div>
         <div class="qrCodeContainer">
             <div id="qr-room401"></div>
             <p>Room 401</p>
-            <select class="qrDropdown" onchange="downloadQRCode('qr-room401')">
-                <option value="">Download QR Code</option>
-                <option value="room401">Download Room 401</option>
-            </select>
+            <button onclick="downloadQRCode('qr-room401')">Download Room 401 QR Code</button>
         </div>
         <div class="qrCodeContainer">
             <div id="qr-room402"></div>
             <p>Room 402</p>
-            <select class="qrDropdown" onchange="downloadQRCode('qr-room402')">
-                <option value="">Download QR Code</option>
-                <option value="room402">Download Room 402</option>
-            </select>
+            <button onclick="downloadQRCode('qr-room402')">Download Room 402 QR Code</button>
         </div>
     </div>
 
@@ -250,7 +234,7 @@
 
         // Generate QR codes for each room
         function generateQRCode(elementId, room) {
-            const qrCodeData = `https://ks-nath.github.io/indoor-mapping/?location=${room}`;
+            const qrCodeData = `https://ks-nath.github.io/indoor-mapping?location=${room}`;
             new QRCode(document.getElementById(elementId), {
                 text: qrCodeData,
                 width: 128,
