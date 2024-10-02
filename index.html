@@ -4,8 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Indoor Navigation Map</title>
-    <link rel="stylesheet" href="style.css"> <!-- Link to your CSS file -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 20px;
+            padding: 20px;
+        }
+
+        #map-container {
+            margin-top: 30px;
+        }
+
+        .qrcode {
+            display: inline-block;
+            margin-left: 10px;
+        }
+    </style>
 </head>
 <body>
     <h1>Indoor Navigation Map</h1>
@@ -17,26 +34,100 @@
         <li>Room 202 <div id="qrcode202" class="qrcode"></div></li>
     </ul>
 
+    <div id="map-container">
+        <h2>Map:</h2>
+        <div id="map"></div>
+    </div>
+
     <script>
         // QR code data for each room
         var rooms = [
-            { id: "qrcode101", url: "https://example.com/map?location=room101" },
-            { id: "qrcode102", url: "https://example.com/map?location=room102" },
-            { id: "qrcode201", url: "https://example.com/map?location=room201" },
-            { id: "qrcode202", url: "https://example.com/map?location=room202" }
+            { id: "qrcode101", url: "https://your-domain.com?location=room101" },
+            { id: "qrcode102", url: "https://your-domain.com?location=room102" },
+            { id: "qrcode201", url: "https://your-domain.com?location=room201" },
+            { id: "qrcode202", url: "https://your-domain.com?location=room202" }
         ];
 
         // Generate QR codes
         rooms.forEach(function(room) {
             new QRCode(document.getElementById(room.id), {
                 text: room.url,
-                width: 128, // Width of the QR code
-                height: 128, // Height of the QR code
-                colorDark : "#000000", // Dark color
-                colorLight : "#ffffff", // Light color
-                correctLevel : QRCode.CorrectLevel.H // Error correction level
+                width: 128,
+                height: 128,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
             });
         });
+
+        // p5.js sketch to create the map
+        let roomLocation;
+
+        function setup() {
+            const canvas = createCanvas(400, 400);
+            canvas.parent('map');
+            noLoop();
+        }
+
+        function draw() {
+            background(255);
+            // Draw room layout (simple squares for now)
+            drawRooms();
+
+            // Get location from URL and highlight the appropriate room
+            const urlParams = new URLSearchParams(window.location.search);
+            roomLocation = urlParams.get('location');
+
+            if (roomLocation) {
+                highlightRoom(roomLocation);
+            }
+        }
+
+        function drawRooms() {
+            // Draw room 101
+            fill(200);
+            rect(50, 50, 100, 100);  // Room 101
+            textSize(20);
+            fill(0);
+            text("Room 101", 60, 120);
+
+            // Draw room 102
+            fill(200);
+            rect(200, 50, 100, 100);  // Room 102
+            fill(0);
+            text("Room 102", 210, 120);
+
+            // Draw room 201
+            fill(200);
+            rect(50, 200, 100, 100);  // Room 201
+            fill(0);
+            text("Room 201", 60, 270);
+
+            // Draw room 202
+            fill(200);
+            rect(200, 200, 100, 100);  // Room 202
+            fill(0);
+            text("Room 202", 210, 270);
+        }
+
+        function highlightRoom(room) {
+            if (room === 'room101') {
+                fill(255, 0, 0);
+                rect(50, 50, 100, 100);  // Highlight Room 101
+            }
+            if (room === 'room102') {
+                fill(255, 0, 0);
+                rect(200, 50, 100, 100);  // Highlight Room 102
+            }
+            if (room === 'room201') {
+                fill(255, 0, 0);
+                rect(50, 200, 100, 100);  // Highlight Room 201
+            }
+            if (room === 'room202') {
+                fill(255, 0, 0);
+                rect(200, 200, 100, 100);  // Highlight Room 202
+            }
+        }
     </script>
 </body>
 </html>
