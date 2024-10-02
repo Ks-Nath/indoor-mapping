@@ -230,7 +230,7 @@
 
         // Generate QR codes for each room
         function generateQRCode(elementId, room) {
-            const qrCodeData = `https://example.com/map?location=${room}`;
+            const qrCodeData = `https://ks-nath.github.io/indoor-mapping?location=${room}`;
             new QRCode(document.getElementById(elementId), {
                 text: qrCodeData,
                 width: 128,
