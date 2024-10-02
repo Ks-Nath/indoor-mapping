@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -99,6 +99,7 @@
     </div>
 
     <script>
+        // Room positions
         let roomPositions = {
             room101: { x: 100, y: 100 },
             room102: { x: 300, y: 100 },
@@ -109,6 +110,19 @@
             room401: { x: 100, y: 400 }, // New Room 401
             room402: { x: 300, y: 400 }  // New Room 402
         };
+
+        // Graph representation of rooms
+        const graph = {
+            room101: ['room102', 'room201', 'room301'],
+            room102: ['room101', 'room202', 'room302'],
+            room201: ['room101', 'room202', 'room401'],
+            room202: ['room102', 'room201', 'room402'],
+            room301: ['room101', 'room302'],
+            room302: ['room102', 'room301', 'room402'],
+            room401: ['room201'],
+            room402: ['room202']
+        };
+
         let startRoom = null;
         let destinationRoom = null;
 
@@ -155,11 +169,16 @@
 
             // Draw path between start and destination if both are selected
             if (startRoom && destinationRoom) {
-                let startPos = roomPositions[startRoom];
-                let endPos = roomPositions[destinationRoom];
-                stroke(0, 0, 255);
-                strokeWeight(3);
-                line(startPos.x, startPos.y, endPos.x, endPos.y); // Draw the line
+                const path = findShortestPath(startRoom, destinationRoom);
+                if (path.length > 0) {
+                    stroke(0, 0, 255);
+                    strokeWeight(3);
+                    for (let i = 0; i < path.length - 1; i++) {
+                        let startPos = roomPositions[path[i]];
+                        let endPos = roomPositions[path[i + 1]];
+                        line(startPos.x, startPos.y, endPos.x, endPos.y); // Draw the line
+                    }
+                }
             }
         }
 
@@ -172,6 +191,30 @@
             }
         });
 
+        // Function to find the shortest path using BFS
+        function findShortestPath(start, destination) {
+            let queue = [[start]];
+            let visited = new Set();
+
+            while (queue.length > 0) {
+                let path = queue.shift();
+                let room = path[path.length - 1];
+
+                if (room === destination) {
+                    return path; // Return the path if destination is found
+                }
+
+                if (!visited.has(room)) {
+                    visited.add(room);
+                    for (let neighbor of graph[room]) {
+                        queue.push([...path, neighbor]); // Add new paths to the queue
+                    }
+                }
+            }
+
+            return []; // Return empty if no path found
+        }
+
         // Generate QR codes for each room
         function generateQRCode(elementId, room) {
             const qrCodeData = `https://ks-nath.github.io/indoor-mapping?location=${room}`;
@@ -182,7 +225,7 @@
             });
         }
 
-        // Generate QR codes for the newly added rooms
+        // Generate QR codes for the rooms
         generateQRCode('qr-room101', 'room101');
         generateQRCode('qr-room102', 'room102');
         generateQRCode('qr-room201', 'room201');
