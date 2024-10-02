@@ -111,6 +111,9 @@
             for (let room in roomPositions) {
                 let pos = roomPositions[room];
 
+                // Ensure no stroke for room circles
+                noStroke();
+
                 // Highlight the starting room in green
                 if (room === startRoom) {
                     fill(0, 255, 0);
@@ -126,7 +129,6 @@
 
                 // Ensure the text style remains consistent
                 fill(0);
-                noStroke(); // Reset any stroke styling
                 textAlign(CENTER);
                 textStyle(NORMAL); // Reset text style to normal
                 text(room, pos.x, pos.y + 5); // Label the room
@@ -136,7 +138,7 @@
             if (startRoom && destinationRoom) {
                 const path = findShortestPath(startRoom, destinationRoom);
                 if (path.length > 0) {
-                    stroke(0, 0, 255);
+                    stroke(0, 0, 255); // Set stroke for path
                     strokeWeight(3);
                     for (let i = 0; i < path.length - 1; i++) {
                         let startPos = roomPositions[path[i]];
