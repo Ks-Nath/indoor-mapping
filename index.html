@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -20,6 +20,12 @@
         }
         #qrCodes {
             margin-top: 30px;
+            display: flex;
+            flex-wrap: wrap; /* Allow the QR codes to wrap to the next line */
+            gap: 20px; /* Add space between the QR codes */
+        }
+        .qrCodeContainer {
+            margin-right: 20px; /* Add space to the right of each QR code */
         }
         #dropdown-container {
             display: none; /* Initially hide the dropdown */
@@ -35,10 +41,10 @@
     <!-- QR Code Display for Rooms -->
     <div id="qrCodes">
         <h2>QR Codes for Starting Locations:</h2>
-        <div id="qr-room101"></div>
-        <div id="qr-room102"></div>
-        <div id="qr-room201"></div>
-        <div id="qr-room202"></div>
+        <div class="qrCodeContainer" id="qr-room101"></div>
+        <div class="qrCodeContainer" id="qr-room102"></div>
+        <div class="qrCodeContainer" id="qr-room201"></div>
+        <div class="qrCodeContainer" id="qr-room202"></div>
     </div>
 
     <!-- Dropdown for Destination -->
