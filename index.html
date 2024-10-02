@@ -25,6 +25,7 @@
             gap: 20px; /* Add space between the QR codes */
         }
         .qrCodeContainer {
+            text-align: center; /* Center align the QR code and its label */
             margin-right: 20px; /* Add space to the right of each QR code */
         }
         #dropdown-container {
@@ -41,10 +42,22 @@
     <!-- QR Code Display for Rooms -->
     <div id="qrCodes">
         <h2>QR Codes for Starting Locations:</h2>
-        <div class="qrCodeContainer" id="qr-room101"></div>
-        <div class="qrCodeContainer" id="qr-room102"></div>
-        <div class="qrCodeContainer" id="qr-room201"></div>
-        <div class="qrCodeContainer" id="qr-room202"></div>
+        <div class="qrCodeContainer">
+            <div id="qr-room101"></div>
+            <p>Room 101</p>
+        </div>
+        <div class="qrCodeContainer">
+            <div id="qr-room102"></div>
+            <p>Room 102</p>
+        </div>
+        <div class="qrCodeContainer">
+            <div id="qr-room201"></div>
+            <p>Room 201</p>
+        </div>
+        <div class="qrCodeContainer">
+            <div id="qr-room202"></div>
+            <p>Room 202</p>
+        </div>
     </div>
 
     <!-- Dropdown for Destination -->
