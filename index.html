@@ -68,6 +68,7 @@
         let start, end;
         let path = [];
         let w, h;
+        let current;
         let destinationRoom = null;
 
         // Room positions (mapping to grid coordinates)
@@ -125,7 +126,6 @@
                 }
             }
 
-            // A* Algorithm for finding the shortest path
             if (openSet.length > 0) {
                 let winner = 0;
                 for (let i = 0; i < openSet.length; i++) {
@@ -133,7 +133,7 @@
                         winner = i;
                     }
                 }
-                let current = openSet[winner];
+                current = openSet[winner];
 
                 if (current === end) {
                     noLoop();  // Path found
@@ -224,6 +224,11 @@
                 const endCoords = roomMapping[selectedRoom];
                 end = grid[endCoords.x][endCoords.y];
                 end.wall = false;
+
+                // Reset openSet and closedSet for a new path calculation
+                openSet = [start];
+                closedSet = [];
+
                 redraw();  // Redraw map and path
             }
         });
@@ -240,8 +245,4 @@
 
         generateQRCode('qr-room101', 'room101');
         generateQRCode('qr-room102', 'room102');
-        generateQRCode('qr-room201', 'room201');
-        generateQRCode('qr-room202', 'room202');
-    </script>
-</body>
-</html>
+        generateQRCode('
