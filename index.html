@@ -3,97 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Indoor Mapping System with QR Codes</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
-    <style>
-        body { font-family: Arial, sans-serif; }
-        #map-container { margin: 20px; }
-        .qrcode-container { margin-top: 20px; }
-        canvas { border: 1px solid black; }
-    </style>
+    <title>Indoor Navigation Map</title>
+    <link rel="stylesheet" href="style.css"> <!-- Link to your CSS file -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body>
-
     <h1>Indoor Navigation Map</h1>
-    <div id="map-container"></div>
-
     <h2>QR Codes for Rooms</h2>
-    <div class="qrcode-container" id="qrcode-room101"></div>
-    <p>Room 101</p>
-
-    <div class="qrcode-container" id="qrcode-room102"></div>
-    <p>Room 102</p>
-
-    <div class="qrcode-container" id="qrcode-room201"></div>
-    <p>Room 201</p>
-
-    <div class="qrcode-container" id="qrcode-room202"></div>
-    <p>Room 202</p>
+    <ul>
+        <li>Room 101 <div id="qrcode101" class="qrcode"></div></li>
+        <li>Room 102 <div id="qrcode102" class="qrcode"></div></li>
+        <li>Room 201 <div id="qrcode201" class="qrcode"></div></li>
+        <li>Room 202 <div id="qrcode202" class="qrcode"></div></li>
+    </ul>
 
     <script>
-        // 1. Base URL of your live web app
-        const baseURL = "https://ks-nath.github.io/indoor-mapping/";
+        // QR code data for each room
+        var rooms = [
+            { id: "qrcode101", url: "https://example.com/map?location=room101" },
+            { id: "qrcode102", url: "https://example.com/map?location=room102" },
+            { id: "qrcode201", url: "https://example.com/map?location=room201" },
+            { id: "qrcode202", url: "https://example.com/map?location=room202" }
+        ];
 
-        // 2. Function to generate QR code for each room
-        function generateQRCode(room, elementId) {
-            const qrCodeURL = `${baseURL}?location=${room}`;  // Generate URL with room parameter
-            QRCode.toCanvas(document.getElementById(elementId), qrCodeURL, function (error) {
-                if (error) console.error(error);
-                console.log(`QR code generated for ${room}`);
+        // Generate QR codes
+        rooms.forEach(function(room) {
+            new QRCode(document.getElementById(room.id), {
+                text: room.url,
+                width: 128, // Width of the QR code
+                height: 128, // Height of the QR code
+                colorDark : "#000000", // Dark color
+                colorLight : "#ffffff", // Light color
+                correctLevel : QRCode.CorrectLevel.H // Error correction level
             });
-        }
-
-        // 3. Generate QR codes for rooms
-        generateQRCode("room101", "qrcode-room101");
-        generateQRCode("room102", "qrcode-room102");
-        generateQRCode("room201", "qrcode-room201");
-        generateQRCode("room202", "qrcode-room202");
-
-        // 4. Set up the p5.js canvas for the map
-        function setup() {
-            createCanvas(600, 400);
-            background(240);
-            fill(200);
-            // Draw rooms
-            rect(100, 50, 150, 100);  // Room 101
-            rect(300, 50, 150, 100);  // Room 102
-            rect(100, 200, 150, 100); // Room 201
-            rect(300, 200, 150, 100); // Room 202
-            textSize(16);
-            fill(0);
-            text('Room 101', 120, 120);
-            text('Room 102', 320, 120);
-            text('Room 201', 120, 270);
-            text('Room 202', 320, 270);
-        }
-
-        // 5. Function to mark the current room on the map based on URL parameter
-        function drawLocationMarker(room) {
-            fill(255, 0, 0);
-            if (room === "room101") {
-                ellipse(175, 100, 20, 20);  // Room 101
-            } else if (room === "room102") {
-                ellipse(375, 100, 20, 20);  // Room 102
-            } else if (room === "room201") {
-                ellipse(175, 250, 20, 20);  // Room 201
-            } else if (room === "room202") {
-                ellipse(375, 250, 20, 20);  // Room 202
-            }
-        }
-
-        // 6. Get the location parameter from the URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const location = urlParams.get('location');
-
-        // 7. Once the map is ready, draw the marker for the current room
-        function draw() {
-            if (location) {
-                drawLocationMarker(location);
-            }
-        }
-
+        });
     </script>
-
 </body>
 </html>
