@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Indoor Navigation Map</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -18,80 +17,13 @@
             padding: 5px;
             margin-top: 10px;
         }
-        #qrCodes {
-            margin-top: 30px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px; /* Add space between the QR codes */
-        }
-        .qrCodeContainer {
-            text-align: center; /* Center align the QR code and its label */
-            margin-right: 20px; /* Add space to the right of each QR code */
-        }
         #dropdown-container {
-            display: none; /* Initially hide the dropdown */
-        }
-        button {
-            margin-top: 10px;
-            font-size: 14px;
-            padding: 8px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0056b3;
+            margin-top: 30px;
         }
     </style>
 </head>
 <body>
-    <h1>Indoor Navigation Map with QR Codes</h1>
-
-    <!-- QR Code Display for Rooms -->
-    <div id="qrCodes">
-        <h2>QR Codes for Starting Locations:</h2>
-        <div class="qrCodeContainer">
-            <div id="qr-room101"></div>
-            <p>Room 101</p>
-            <button onclick="downloadQRCode('qr-room101')">Download Room 101 QR Code</button>
-        </div>
-        <div class="qrCodeContainer">
-            <div id="qr-room102"></div>
-            <p>Room 102</p>
-            <button onclick="downloadQRCode('qr-room102')">Download Room 102 QR Code</button>
-        </div>
-        <div class="qrCodeContainer">
-            <div id="qr-room201"></div>
-            <p>Room 201</p>
-            <button onclick="downloadQRCode('qr-room201')">Download Room 201 QR Code</button>
-        </div>
-        <div class="qrCodeContainer">
-            <div id="qr-room202"></div>
-            <p>Room 202</p>
-            <button onclick="downloadQRCode('qr-room202')">Download Room 202 QR Code</button>
-        </div>
-        <div class="qrCodeContainer">
-            <div id="qr-room301"></div>
-            <p>Room 301</p>
-            <button onclick="downloadQRCode('qr-room301')">Download Room 301 QR Code</button>
-        </div>
-        <div class="qrCodeContainer">
-            <div id="qr-room302"></div>
-            <p>Room 302</p>
-            <button onclick="downloadQRCode('qr-room302')">Download Room 302 QR Code</button>
-        </div>
-        <div class="qrCodeContainer">
-            <div id="qr-room401"></div>
-            <p>Room 401</p>
-            <button onclick="downloadQRCode('qr-room401')">Download Room 401 QR Code</button>
-        </div>
-        <div class="qrCodeContainer">
-            <div id="qr-room402"></div>
-            <p>Room 402</p>
-            <button onclick="downloadQRCode('qr-room402')">Download Room 402 QR Code</button>
-        </div>
-    </div>
+    <h1>Indoor Navigation Map</h1>
 
     <!-- Dropdown for Destination -->
     <div id="dropdown-container">
@@ -122,10 +54,10 @@
             room102: { x: 300, y: 100 },
             room201: { x: 100, y: 300 },
             room202: { x: 300, y: 300 },
-            room301: { x: 100, y: 200 }, // New Room 301
-            room302: { x: 300, y: 200 }, // New Room 302
-            room401: { x: 100, y: 400 }, // New Room 401
-            room402: { x: 300, y: 400 }  // New Room 402
+            room301: { x: 100, y: 200 }, // Room 301
+            room302: { x: 300, y: 200 }, // Room 302
+            room401: { x: 100, y: 400 }, // Room 401
+            room402: { x: 300, y: 400 }  // Room 402
         };
 
         // Graph representation of rooms
@@ -230,35 +162,6 @@
             }
 
             return []; // Return empty if no path found
-        }
-
-        // Generate QR codes for each room
-        function generateQRCode(elementId, room) {
-            const qrCodeData = `https://ks-nath.github.io/indoor-mapping?location=${room}`;
-            new QRCode(document.getElementById(elementId), {
-                text: qrCodeData,
-                width: 128,
-                height: 128
-            });
-        }
-
-        // Generate QR codes for the rooms
-        generateQRCode('qr-room101', 'room101');
-        generateQRCode('qr-room102', 'room102');
-        generateQRCode('qr-room201', 'room201');
-        generateQRCode('qr-room202', 'room202');
-        generateQRCode('qr-room301', 'room301');
-        generateQRCode('qr-room302', 'room302');
-        generateQRCode('qr-room401', 'room401');
-        generateQRCode('qr-room402', 'room402');
-
-        // Function to download the QR code image
-        function downloadQRCode(elementId) {
-            const qrElement = document.querySelector(`#${elementId} img`);
-            const link = document.createElement('a');
-            link.href = qrElement.src;
-            link.download = `${elementId}.png`;
-            link.click();
         }
     </script>
 </body>
