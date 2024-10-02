@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Indoor Navigation Map with QR Code and Shortest Route</title>
+    <title>Indoor Navigation Map</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
@@ -11,7 +11,7 @@
             font-family: Arial, sans-serif;
         }
         #map-container {
-            margin-top: 30px;
+            margin-top: 20px;
         }
         select {
             font-size: 16px;
@@ -21,10 +21,13 @@
         #qrCodes {
             margin-top: 30px;
         }
+        #qr-container {
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
-    <h1>Indoor Navigation Map</h1>
+    <h1>Indoor Navigation Map with QR Codes</h1>
 
     <!-- Dropdown for Destination -->
     <div id="map-container">
