@@ -123,8 +123,12 @@
                 }
 
                 ellipse(pos.x, pos.y, 50, 50); // Draw room as a circle
+
+                // Ensure the text style remains consistent
                 fill(0);
+                noStroke(); // Reset any stroke styling
                 textAlign(CENTER);
+                textStyle(NORMAL); // Reset text style to normal
                 text(room, pos.x, pos.y + 5); // Label the room
             }
 
