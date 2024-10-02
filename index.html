@@ -21,6 +21,9 @@
         #qrCodes {
             margin-top: 30px;
         }
+        #dropdown-container {
+            display: none; /* Initially hide the dropdown */
+        }
         #qr-container {
             margin-top: 20px;
         }
@@ -29,8 +32,17 @@
 <body>
     <h1>Indoor Navigation Map with QR Codes</h1>
 
+    <!-- QR Code Display for Rooms -->
+    <div id="qrCodes">
+        <h2>QR Codes for Starting Locations:</h2>
+        <div id="qr-room101"></div>
+        <div id="qr-room102"></div>
+        <div id="qr-room201"></div>
+        <div id="qr-room202"></div>
+    </div>
+
     <!-- Dropdown for Destination -->
-    <div id="map-container">
+    <div id="dropdown-container">
         <h2>Select Destination:</h2>
         <select id="destination">
             <option value="none">Select a Room</option>
@@ -39,19 +51,12 @@
             <option value="room201">Room 201</option>
             <option value="room202">Room 202</option>
         </select>
-
-        <!-- Canvas for the Map -->
-        <h2>Map:</h2>
-        <div id="map"></div>
     </div>
 
-    <!-- QR Code Display for Rooms -->
-    <div id="qrCodes">
-        <h2>QR Codes for Starting Locations:</h2>
-        <div id="qr-room101"></div>
-        <div id="qr-room102"></div>
-        <div id="qr-room201"></div>
-        <div id="qr-room202"></div>
+    <!-- Canvas for the Map -->
+    <div id="map-container">
+        <h2>Map:</h2>
+        <div id="map"></div>
     </div>
 
     <script>
@@ -102,6 +107,9 @@
                 start = grid[startCoords.x][startCoords.y];
                 start.wall = false;
                 openSet.push(start);
+
+                // Show the dropdown when QR code is scanned
+                document.getElementById('dropdown-container').style.display = 'block';
             }
 
             noLoop(); // We control when the canvas redraws
@@ -222,7 +230,7 @@
 
         // Generate QR codes for each room
         function generateQRCode(elementId, room) {
-            const qrCodeData = `https://ks-nath.github.io/indoor-mapping?location=${room}`;
+            const qrCodeData = `https://example.com/map?location=${room}`;
             new QRCode(document.getElementById(elementId), {
                 text: qrCodeData,
                 width: 128,
